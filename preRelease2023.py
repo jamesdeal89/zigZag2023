@@ -209,6 +209,7 @@ class Dastan:
         self._MoveOptionOffer.append("chowkidar")
         self._MoveOptionOffer.append("cuirassier")
         self._MoveOptionOffer.append("ryott")
+        self._MoveOptionOffer.append("faris")
         self._MoveOptionOffer.append("faujdar")
 
     def __CreateRyottMoveOption(self, Direction):
@@ -281,6 +282,27 @@ class Dastan:
         NewMoveOption.AddToPossibleMoves(NewMove)
         return NewMoveOption
 
+    # Task 2
+    def __CreateFarisMoveOption(self, direction):
+        NewMoveOption = MoveOption("faris")
+        NewMove = Move(2*direction,-1 * direction)
+        NewMoveOption.AddToPossibleMoves(NewMove)
+        NewMove = Move(2*direction,1*direction)
+        NewMoveOption.AddToPossibleMoves(NewMove)
+        NewMove = Move(1*direction,2*direction)
+        NewMoveOption.AddToPossibleMoves(NewMove)
+        NewMove = Move(1*direction,-2*direction)
+        NewMoveOption.AddToPossibleMoves(NewMove)
+        NewMove = Move(-1*direction,2*direction)
+        NewMoveOption.AddToPossibleMoves(NewMove)
+        NewMove = Move(-1*direction,-2*direction)
+        NewMoveOption.AddToPossibleMoves(NewMove)
+        NewMove = Move(-2*direction,-1*direction)
+        NewMoveOption.AddToPossibleMoves(NewMove)
+        NewMove = Move(-2*direction,1*direction)
+        NewMoveOption.AddToPossibleMoves(NewMove)
+        return NewMoveOption
+
     def __CreateMoveOption(self, Name, Direction):
         if Name == "chowkidar":
             return self.__CreateChowkidarMoveOption(Direction)
@@ -290,16 +312,20 @@ class Dastan:
             return self.__CreateFaujdarMoveOption(Direction)
         elif Name == "jazair":
             return self.__CreateJazairMoveOption(Direction)
+        elif Name == "faris":
+            return self.__CreateFarisMoveOption(Direction)
         else:
             return self.__CreateCuirassierMoveOption(Direction)
 
     def __CreateMoveOptions(self):
         self._Players[0].AddToMoveOptionQueue(self.__CreateMoveOption("ryott", 1))
+        self._Players[0].AddToMoveOptionQueue(self.__CreateMoveOption("faris", 1))
         self._Players[0].AddToMoveOptionQueue(self.__CreateMoveOption("chowkidar", 1))
         self._Players[0].AddToMoveOptionQueue(self.__CreateMoveOption("cuirassier", 1))
         self._Players[0].AddToMoveOptionQueue(self.__CreateMoveOption("faujdar", 1))
         self._Players[0].AddToMoveOptionQueue(self.__CreateMoveOption("jazair", 1))
         self._Players[1].AddToMoveOptionQueue(self.__CreateMoveOption("ryott", -1))
+        self._Players[1].AddToMoveOptionQueue(self.__CreateMoveOption("faris", -1))
         self._Players[1].AddToMoveOptionQueue(self.__CreateMoveOption("chowkidar", -1))
         self._Players[1].AddToMoveOptionQueue(self.__CreateMoveOption("jazair", -1))
         self._Players[1].AddToMoveOptionQueue(self.__CreateMoveOption("faujdar", -1))
