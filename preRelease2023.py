@@ -22,6 +22,10 @@ class Dastan:
         self.__CreatePieces(NoOfPieces)
         self._CurrentPlayer = self._Players[0]
 
+    # task 4
+    def AwardLuckyStar(self):
+        return random.choice([True,False,False,False])
+
     # Task 1
     def CreateCustomPlayers(self):
         p1Name = input("Enter player 1 name:")
@@ -142,8 +146,16 @@ class Dastan:
             self.__DisplayState()
             SquareIsValid = False
             Choice = 0
-            while Choice < 1 or Choice > 3:
-                Choice = int(input("Choose move option to use from queue (1 to 3) or 9 to take the offer: "))
+            luckyStar = False
+            limit = 3
+            if self._CurrentPlayer.GetLuckyStarAwarded() == False:
+                luckyStar = self.AwardLuckyStar()
+                if luckyStar:
+                    print("You have been awarded a lucky star, you can select any move from your queue for free this turn.")
+                    self._CurrentPlayer.setLuckyStarAwarded(True)
+                    limit = 8
+            while (Choice < 1 or Choice > limit):
+                Choice = int(input("Choose move option to use from queue (1 to 3) or (1 to 8 with lucky star) or 9 to take the offer: "))
                 if Choice == 9:
                     self.__UseMoveOptionOffer()
                     self.__DisplayState()
@@ -157,7 +169,8 @@ class Dastan:
             MoveLegal = self._CurrentPlayer.CheckPlayerMove(Choice, StartSquareReference, FinishSquareReference)
             if MoveLegal:
                 PointsForPieceCapture = self.__CalculatePieceCapturePoints(FinishSquareReference)
-                self._CurrentPlayer.ChangeScore(-(Choice + (2 * (Choice - 1))))
+                if not luckyStar:
+                    self._CurrentPlayer.ChangeScore(-(Choice + (2 * (Choice - 1))))
                 self._CurrentPlayer.UpdateQueueAfterMove(Choice)
                 self.__UpdateBoard(StartSquareReference, FinishSquareReference)
                 self.__UpdatePlayerScore(PointsForPieceCapture)
@@ -485,6 +498,13 @@ class Player:
         self.__Name = N
         self.__Direction = D
         self.__Queue = MoveOptionQueue()
+        self.__LuckyStarAwarded = False
+
+    def GetLuckyStarAwarded(self):
+        return self.__LuckyStarAwarded
+    
+    def setLuckyStarAwarded(self,value):
+        self.__LuckyStarAwarded = value
 
     def SameAs(self, APlayer):
         if APlayer is None:
