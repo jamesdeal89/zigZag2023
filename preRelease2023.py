@@ -153,9 +153,17 @@ class Dastan:
                 if luckyStar:
                     print("You have been awarded a lucky star, you can select any move from your queue for free this turn.")
                     self._CurrentPlayer.setLuckyStarAwarded(True)
-                    limit = 8
+                    limit = 7
             while (Choice < 1 or Choice > limit):
-                Choice = int(input("Choose move option to use from queue (1 to 3) or (1 to 8 with lucky star) or 9 to take the offer: "))
+                Choice = int(input("Choose move option to use from queue (1 to 3) or (1 to 7 with lucky star) or 9 to take the offer: "))
+                if Choice == 8:
+                    # task 5 
+                    if self._CurrentPlayer.SameAs(self._Players[0]):
+                        print(self._Players[1].getJustQueue())
+                    else:
+                        print(self._Players[0].getJustQueue())
+                    self._CurrentPlayer.ChangeScore(-5)
+                    self.__DisplayState()
                 if Choice == 9:
                     self.__UseMoveOptionOffer()
                     self.__DisplayState()
@@ -499,6 +507,10 @@ class Player:
         self.__Direction = D
         self.__Queue = MoveOptionQueue()
         self.__LuckyStarAwarded = False
+
+    # task 5
+    def getJustQueue(self):
+        fullQ = self.__Queue.GetQueueAsString()
 
     def GetLuckyStarAwarded(self):
         return self.__LuckyStarAwarded
