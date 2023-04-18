@@ -22,6 +22,16 @@ class Dastan:
         self.__CreatePieces(NoOfPieces)
         self._CurrentPlayer = self._Players[0]
 
+    # task 6
+    def __GetValidInt(self, inputVal):
+        try:
+            int(inputVal)
+        except ValueError:
+            print("Invalid data entry, not an integer")
+            return False
+        else:
+            return True
+
     # task 4
     def AwardLuckyStar(self):
         return random.choice([True,False,False,False])
@@ -117,11 +127,22 @@ class Dastan:
         return not (Player1HasMirza and Player2HasMirza)
 
     def __GetSquareReference(self, Description):
-        SelectedSquare = int(input("Enter the square " + Description + " (row number followed by column number): "))
+        stop = False
+        while stop == False:
+            userInput = input("Enter the square " + Description + " (row number followed by column number): ")
+            stop = self.__GetValidInt(userInput)
+            if stop == True and len(userInput) > 2 or int(userInput[1]) > 6:
+                print("Error: board size is 6x6")
+                stop = False
+        SelectedSquare = int(userInput)
         return SelectedSquare
 
     def __UseMoveOptionOffer(self):
-        ReplaceChoice = int(input("Choose the move option from your queue to replace (1 to 5): "))
+        stop = False
+        while stop == False:
+            userInput = input(input("Choose the move option from your queue to replace (1 to 5): "))
+            stop = self.__GetValidInt(userInput)
+        ReplaceChoice = int(userInput)
         self._CurrentPlayer.UpdateMoveOptionQueueWithOffer(ReplaceChoice - 1, self.__CreateMoveOption(self._MoveOptionOffer[self._MoveOptionOfferPosition], self._CurrentPlayer.GetDirection()))
         self._CurrentPlayer.ChangeScore(-(10 - (ReplaceChoice * 2)))
         self._MoveOptionOfferPosition = random.randint(0, 4)
@@ -155,7 +176,11 @@ class Dastan:
                     self._CurrentPlayer.setLuckyStarAwarded(True)
                     limit = 7
             while (Choice < 1 or Choice > limit):
-                Choice = int(input("Choose move option to use from queue (1 to 3) or (1 to 7 with lucky star) or 9 to take the offer: "))
+                stop = False
+                while stop == False:
+                    Choice = input("Choose move option to use from queue (1 to 3) or (1 to 7 with lucky star) or 9 to take the offer: ")
+                    stop = self.__GetValidInt(Choice)
+                Choice = int(Choice)
                 if Choice == 8:
                     # task 5 
                     if self._CurrentPlayer.SameAs(self._Players[0]):
