@@ -140,12 +140,14 @@ class Dastan:
     def __UseMoveOptionOffer(self):
         stop = False
         while stop == False:
-            userInput = input(input("Choose the move option from your queue to replace (1 to 5): "))
+            userInput = input("Choose the move option from your queue to replace (1 to 5): ")
             stop = self.__GetValidInt(userInput)
         ReplaceChoice = int(userInput)
         self._CurrentPlayer.UpdateMoveOptionQueueWithOffer(ReplaceChoice - 1, self.__CreateMoveOption(self._MoveOptionOffer[self._MoveOptionOfferPosition], self._CurrentPlayer.GetDirection()))
         self._CurrentPlayer.ChangeScore(-(10 - (ReplaceChoice * 2)))
         self._MoveOptionOfferPosition = random.randint(0, 4)
+        # task 7
+        self._CurrentPlayer.DecreaseChoiceOptionsLeft()
 
     def __GetPointsForOccupancyByPlayer(self, CurrentPlayer):
         ScoreAdjustment = 0
@@ -178,7 +180,11 @@ class Dastan:
             while (Choice < 1 or Choice > limit):
                 stop = False
                 while stop == False:
-                    Choice = input("Choose move option to use from queue (1 to 3) or (1 to 7 with lucky star) or 9 to take the offer: ")
+                    # task 7
+                    if self._CurrentPlayer.GetChoiceOptionsLeft() > 0:
+                        Choice = input("Choose move option to use from queue (1 to 3) or (1 to 7 with lucky star) or 9 to take the offer: ")
+                    else:
+                        Choice = input("Choose move option to use from queue (1 to 3) or (1 to 7 with lucky star): ")
                     stop = self.__GetValidInt(Choice)
                 Choice = int(Choice)
                 if Choice == 8:
@@ -189,9 +195,12 @@ class Dastan:
                         print(self._Players[0].getJustQueue())
                     self._CurrentPlayer.ChangeScore(-5)
                     self.__DisplayState()
-                if Choice == 9:
+                # task 7
+                if Choice == 9 and self._CurrentPlayer.GetChoiceOptionsLeft() > 0:
                     self.__UseMoveOptionOffer()
                     self.__DisplayState()
+                elif Choice == 9 and self._CurrentPlayer.GetChoiceOptionsLeft() == 0:
+                    print("You have no choice options left.")
             while not SquareIsValid:
                 StartSquareReference = self.__GetSquareReference("containing the piece to move")
                 SquareIsValid = self.__CheckSquareIsValid(StartSquareReference, True)
@@ -532,6 +541,17 @@ class Player:
         self.__Direction = D
         self.__Queue = MoveOptionQueue()
         self.__LuckyStarAwarded = False
+        # task 7
+        self.__ChoiceOptionsLeft = 3
+
+    # task 7
+    def GetChoiceOptionsLeft(self):
+        return self.__ChoiceOptionsLeft
+
+    # task 7
+    def DecreaseChoiceOptionsLeft(self):
+        self.__ChoiceOptionsLeft -= 1
+        print(f"You have {self.__ChoiceOptionsLeft} choice options left")
 
     # task 5
     def getJustQueue(self):
