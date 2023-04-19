@@ -210,6 +210,8 @@ class Dastan:
                 SquareIsValid = self.__CheckSquareIsValid(FinishSquareReference, False)
             MoveLegal = self._CurrentPlayer.CheckPlayerMove(Choice, StartSquareReference, FinishSquareReference)
             if MoveLegal:
+                # task 8
+                scoreBeforeMove = self._CurrentPlayer.GetScore()
                 PointsForPieceCapture = self.__CalculatePieceCapturePoints(FinishSquareReference)
                 if not luckyStar:
                     self._CurrentPlayer.ChangeScore(-(Choice + (2 * (Choice - 1))))
@@ -217,10 +219,19 @@ class Dastan:
                 self.__UpdateBoard(StartSquareReference, FinishSquareReference)
                 self.__UpdatePlayerScore(PointsForPieceCapture)
                 print("New score: " + str(self._CurrentPlayer.GetScore()) + "\n")
-            if self._CurrentPlayer.SameAs(self._Players[0]):
-                self._CurrentPlayer = self._Players[1]
+                self.__DisplayState()
+                redo = input("Would you like to undo your move?(y/n):").lower().strip()
+                if redo == "y":
+                    self._CurrentPlayer.ResetQueueBackAfterUndo(Choice-1)
+                    self._CurrentPlayer.ChangeScore(-self._CurrentPlayer.GetScore()+scoreBeforeMove-5)
+                    self.__UpdateBoard(FinishSquareReference, StartSquareReference)
             else:
-                self._CurrentPlayer = self._Players[0]
+                redo == "n"
+            if redo == "n":
+                if self._CurrentPlayer.SameAs(self._Players[0]):
+                    self._CurrentPlayer = self._Players[1]
+                else:
+                    self._CurrentPlayer = self._Players[0]
             GameOver = self.__CheckIfGameOver()
         self.__DisplayState()
         self.__DisplayFinalResult()
@@ -512,6 +523,11 @@ class MoveOptionQueue:
     def __init__(self):
         self.__Queue = []
 
+    # task 8
+    def ResetQueueBack(self, position):
+        self.__Queue.insert(position, self.__Queue[-1])
+        self.__Queue.pop(-1)
+
     def GetQueueAsString(self):
         QueueAsString = ""
         Count = 1
@@ -543,6 +559,10 @@ class Player:
         self.__LuckyStarAwarded = False
         # task 7
         self.__ChoiceOptionsLeft = 3
+
+    # task 8
+    def ResetQueueBackAfterUndo(self, position):
+        self.__Queue.ResetQueueBack(position)
 
     # task 7
     def GetChoiceOptionsLeft(self):
